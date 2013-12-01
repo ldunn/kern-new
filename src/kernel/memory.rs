@@ -1,4 +1,5 @@
 use core::mem;
+use util;
 
 static mut HEAP_START: uint = 0;
 static BLOCK_SIZE: uint = 4096; // one byte for the free flag
@@ -28,10 +29,9 @@ pub unsafe fn init() {
 #[lang="exchange_malloc"]
 pub unsafe fn malloc(size: uint) -> (*mut u8, uint) {
     let block = find_block_run(first_free, size/BLOCK_SIZE + 1, 0);
-    let mut iter = block;
-    while iter < block + size/BLOCK_SIZE {
+    util::range(block, block + size/BLOCK_SIZE, |iter| {
         free_blocks[iter / 32] = free_blocks[iter/32] ^ (1<<(iter % 32));
-    }
+    });
     return (((block*BLOCK_SIZE) + HEAP_START) as *mut u8, size);
 }
 
