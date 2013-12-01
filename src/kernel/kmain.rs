@@ -17,6 +17,7 @@ mod memory;
 mod screen;
 mod util;
 mod gdt;
+pub mod idt;
 
 #[no_mangle]
 pub extern fn kmain() {
@@ -28,9 +29,12 @@ pub extern fn kmain() {
         xs.push(0xdead);
         xs.push(0xdead);
         screen::cls(0);
-        screen::puts("Hello!", colours);
+        screen::puts("Hello!\n", colours);
         screen::puts("- Initializing GDT... ", colours);
         gdt::init();
+        screen::puts("DONE\n", colours);
+        screen::puts("Initializing IDT... ", colours);
+        idt::init();
         screen::puts("DONE\n", colours);
     }
     loop{};
