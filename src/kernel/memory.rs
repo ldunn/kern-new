@@ -35,6 +35,13 @@ pub unsafe fn malloc(size: uint) -> (*mut u8, uint) {
     return (((block*BLOCK_SIZE) + HEAP_START) as *mut u8, size);
 }
 
+pub unsafe fn realloc(ptr: *mut u8, size: uint) -> (*mut u8, uint)
+{
+    let (new_mem,_) = malloc(size);
+    util::memcpy(new_mem as uint, ptr as uint, BLOCK_SIZE); // TODO: FIX THIS;
+    (new_mem, size)
+}
+
 #[lang="exchange_free"]
 unsafe fn exchange_free(addr: *mut u8) {
     let addr = addr as uint;
@@ -49,6 +56,6 @@ pub struct Alloc;
 impl mem::Allocator for Alloc {
     unsafe fn alloc(&mut self, size:uint) -> (*mut u8, uint) { malloc(size) }
     unsafe fn zero_alloc(&mut self, size:uint) -> (*mut u8, uint) { malloc(size) }
-    unsafe fn realloc(&mut self, ptr: *mut u8, size: uint) -> (*mut u8, uint) { malloc(size) }
+    unsafe fn realloc(&mut self, ptr: *mut u8, size: uint) -> (*mut u8, uint) { realloc(ptr, size) }
     unsafe fn free(&mut self, ptr: *mut u8) { free(ptr); }
 }
