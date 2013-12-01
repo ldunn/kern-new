@@ -1,5 +1,5 @@
 RUST_PATH := .
-QEMU := qemu
+QEMU := qemu-system-i386
 BOCHS := bochs
 SOURCE_SUFFIXES := '(' -name '*.s' -o -name 'main.rs' -o -name 'lib.rs' -o -name 'kmain.rs' ')'
 SRCFILES := $(shell find 'src' ${SOURCE_SUFFIXES})
