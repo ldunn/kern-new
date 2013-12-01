@@ -35,11 +35,15 @@ pub extern fn kmain() {
         screen::puts("- Initializing GDT... ", colours);
         gdt::init();
         screen::puts("DONE\n", colours);
-        screen::puts("Initializing IDT... ", colours);
+        screen::puts("- Initializing IDT... ", colours);
         idt::init();
         screen::puts("DONE\n", colours);
+        screen::puts("- Initializing timer... ", colours);
         timer::init();
+        screen::puts("DONE\n", colours);
+        screen::puts("- Initializing keyboard... ", colours);
         keyboard::init();
+        screen::puts("DONE\n", colours);
     }
     loop{};
 }
