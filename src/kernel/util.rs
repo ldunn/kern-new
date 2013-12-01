@@ -44,6 +44,15 @@ pub unsafe fn memcpy(to: uint, from: uint, len: uint) {
     }
 }
 
+pub fn pow(b: uint, e: uint) -> uint {
+    if e == 0 { return 1; }
+    let mut x = b;
+    range(1, e-1, |i| {
+        x *= b;
+    });
+    x
+}
+
 extern {
     pub fn outportb(val: u8, port: u16);
     pub fn inportb(port: u16) -> u8;
