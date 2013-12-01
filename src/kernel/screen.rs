@@ -4,6 +4,7 @@
 use util;
 use core::vec;
 use core::slice;
+use core::option::{Some, None};
 use memory::Alloc;
 
 pub struct Cursor {
@@ -92,6 +93,10 @@ pub unsafe fn puthex(hex: uint, colours: Colours)
 
 pub unsafe fn putdec(dec: uint, colours: Colours)
 {
+    if dec == 0 {
+        puts("0", colours);
+        return;
+    }
     let mut buf = vec::Vec::with_alloc(Alloc) ;
     let mut digit = dec % 10;
     let mut val = dec;
@@ -102,7 +107,11 @@ pub unsafe fn putdec(dec: uint, colours: Colours)
     }
 
     util::range(0, buf.len()-1, |i| {
-        putc(buf.as_slice()[buf.len()-1-i], colours);
+        let x = buf.pop();
+        match x {
+            Some(x) => putc(x, colours),
+            None => ()
+        }
     });
 }
 
