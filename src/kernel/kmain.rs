@@ -14,15 +14,16 @@ use memory::Alloc;
 #[path = "../rust-core/core/mod.rs"]
 mod core;
 mod memory;
-mod screen;
+pub mod screen;
 mod util;
 mod gdt;
 pub mod idt;
 mod timer;
 mod keyboard;
+pub mod multiboot;
 
 #[no_mangle]
-pub extern fn kmain() {
+pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
     let colours = screen::Colours {fore: 7, back: 0}; // Light gray on black
     unsafe { 
         memory::init();
@@ -32,6 +33,9 @@ pub extern fn kmain() {
         xs.push(0xdead);
         screen::cls(0);
         screen::puts("Hello!\n", colours);
+        screen::puts("Multiboot magic: ", colours);
+        screen::puthex(magic, colours);
+        screen::puts("\n", colours);
         screen::puts("- Initializing GDT... ", colours);
         gdt::init();
         screen::puts("DONE\n", colours);
@@ -44,6 +48,13 @@ pub extern fn kmain() {
         screen::puts("- Initializing keyboard... ", colours);
         keyboard::init();
         screen::puts("DONE\n", colours);
+
+        multiboot::print(mbd, colours);
+        let mut mmap: *multiboot::memory_map = (*mbd).mmap_addr as *multiboot::memory_map;
+        while (mmap as uint) < ((*mbd).mmap_addr + (*mbd).mmap_length) {
+            multiboot::mmap_print(mmap, colours);
+            mmap = ((mmap as uint) + (*mmap).size + core::mem::size_of::<u32>()) as *multiboot::memory_map;
+        }
     }
     loop{};
 }
