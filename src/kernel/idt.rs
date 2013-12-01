@@ -194,6 +194,7 @@ pub extern "C" fn isr_handler(regs: registers)
         util::range(0, 22, |_| {
             screen::putc('*' as u8, colours);
         });
+        if regs.int_no == 6 {screen::puthex(regs.eip, colours) }
         loop{};
     }
 }
