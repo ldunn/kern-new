@@ -1,0 +1,14 @@
+.*.*.swp
+*.swp
+*.o
+*.so
+*.a
+kernel.bin
+*.elf
+os.iso
+isofs/System/*
+*.d
+*~
+isofs/boot/grub/stage2_eltorito
+*.rust
+rustpkg_db.json

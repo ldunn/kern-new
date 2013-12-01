@@ -1,0 +1,5 @@
+default 1
+timeout 3
+
+title OS
+kernel /System/kernel.bin
