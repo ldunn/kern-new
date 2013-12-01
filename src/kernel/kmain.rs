@@ -19,6 +19,7 @@ mod util;
 mod gdt;
 pub mod idt;
 mod timer;
+mod keyboard;
 
 #[no_mangle]
 pub extern fn kmain() {
@@ -38,6 +39,7 @@ pub extern fn kmain() {
         idt::init();
         screen::puts("DONE\n", colours);
         timer::init();
+        keyboard::init();
     }
     loop{};
 }
