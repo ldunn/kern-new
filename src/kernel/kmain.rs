@@ -18,6 +18,7 @@ mod screen;
 mod util;
 mod gdt;
 pub mod idt;
+mod timer;
 
 #[no_mangle]
 pub extern fn kmain() {
@@ -36,6 +37,7 @@ pub extern fn kmain() {
         screen::puts("Initializing IDT... ", colours);
         idt::init();
         screen::puts("DONE\n", colours);
+        timer::init();
     }
     loop{};
 }
