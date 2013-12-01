@@ -38,7 +38,7 @@ pub unsafe fn putc(c: u8, colours: Colours)
     if c == 10 { // Newline
         cursor.y += 1;
         cursor.x = 0;
-        scroll();
+        scroll(colours.back);
         move_cursor();
         return;
     }
@@ -57,7 +57,7 @@ pub unsafe fn putc(c: u8, colours: Colours)
         cursor.x = 0;
         cursor.y += 1;
     }
-    scroll();
+    scroll(colours.back);
     move_cursor();
 }
 
@@ -107,14 +107,14 @@ pub unsafe fn putdec(dec: uint, colours: Colours)
 }
 
 
-pub unsafe fn scroll() {
+pub unsafe fn scroll(background: u16) {
     if cursor.y >= 25 {
         cursor.y = 24;
         util::range(0, 24*80, |i| {
             util::memset_u16(0xb8000+i*2, *((0xb8000+(i+80)*2) as *u16), 1);
         });
         util::range(24*80+1, 25*80, |i| {
-            util::memset_u16(0xb8000+i*2, 0x20 | 1 << 12, 1);
+            util::memset_u16(0xb8000+i*2, 0x20 | background << 12, 1);
         });
     }
 }
