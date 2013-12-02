@@ -177,9 +177,14 @@ unsafe fn remap_pic()
 }
 
 #[no_mangle]
-pub extern "C" fn isr_handler(regs: registers)
+pub extern "C" fn isr_handler(mut regs: registers)
 {
     unsafe {
+        if ((*interrupt_handlers)[regs.int_no] as uint != 0) {
+            util::outportb(0x20, 0x20);
+            (*interrupt_handlers)[regs.int_no](&mut regs);
+            return;
+        }
         let colours = screen::Colours{fore: 15, back:4};
         screen::cls(4);
         util::range(0, 22, |_| {
