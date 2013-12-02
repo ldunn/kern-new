@@ -35,6 +35,14 @@ pub unsafe fn malloc(size: uint) -> (*mut u8, uint) {
     return (((block*BLOCK_SIZE) + HEAP_START) as *mut u8, size);
 }
 
+pub unsafe fn malloc_phys(size: uint) -> (*mut u8, uint, *mut u8) {
+    let block = find_block_run(first_free, size/BLOCK_SIZE + 1, 0);
+    util::range(block, block + size/BLOCK_SIZE, |iter| {
+        free_blocks[iter / 32] = free_blocks[iter/32] ^ (1<<(iter % 32));
+    });
+    (((block*BLOCK_SIZE) + HEAP_START) as *mut u8, size, ((block*BLOCK_SIZE) + HEAP_START) as *mut u8)
+}
+
 pub unsafe fn realloc(ptr: *mut u8, size: uint) -> (*mut u8, uint)
 {
     let (new_mem,_) = malloc(size);

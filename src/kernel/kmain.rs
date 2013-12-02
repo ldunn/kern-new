@@ -20,12 +20,13 @@ mod gdt;
 pub mod idt;
 mod timer;
 mod keyboard;
-pub mod multiboot;
+mod multiboot;
+mod paging;
 
 #[no_mangle]
 pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
     let colours = screen::Colours {fore: 7, back: 0}; // Light gray on black
-    unsafe { 
+    unsafe {
         memory::init();
         let mut xs = vec::Vec::with_alloc(Alloc);
         xs.push(0xdead);
@@ -41,6 +42,9 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
         screen::puts("DONE\n", colours);
         screen::puts("- Initializing IDT... ", colours);
         idt::init();
+        screen::puts("DONE\n", colours);
+        screen::puts("- Initializing Paging... ", colours);
+        paging::init();
         screen::puts("DONE\n", colours);
         screen::puts("- Initializing timer... ", colours);
         timer::init();
