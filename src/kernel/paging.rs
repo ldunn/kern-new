@@ -35,7 +35,7 @@ pub unsafe fn init()
     let mut i = 0;
     while i < num_frames*0x1000 {
         let x = get_page(i, true, page_dir);
-        *x = alloc_frame(*x, false, false);
+        *x = alloc_frame(*x, false, true);
         i += 0x1000;
     }
 

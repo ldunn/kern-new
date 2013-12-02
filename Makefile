@@ -20,14 +20,19 @@ bochs: os.iso
 bochsgui: os.iso
 	@$(BOCHS) -f bochsrcgui
 
-os.iso: kernel
+os.iso: kernel userland
 	@mkdir -p isofs/System
 	cp src/kernel/kernel.bin isofs/System
+	cp src/userland/main.elf isofs/System
 	genisoimage -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -input-charset utf-8 -boot-info-table -o $@ isofs
 
 
 kernel:
 	@cd src/kernel/ && $(MAKE)
 
+userland:
+	@cd src/userland/ && $(MAKE)
+
 clean:
 	@cd src/kernel && $(MAKE) clean
+	@cd src/userland && $(MAKE) clean

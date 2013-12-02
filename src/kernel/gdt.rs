@@ -2,6 +2,7 @@ use memory;
 
 use core::mem::size_of;
 use util;
+use usermode;
 
 #[packed]
 pub struct GDT {
@@ -67,14 +68,14 @@ unsafe fn new_entry(base: uint, limit: uint, access: u8, flags: u8)
 pub unsafe fn init() {
     let (gdtaddr, _) = memory::malloc(size_of::<GDT>() * GDT_ENTRIES);
     gdt = gdtaddr as *GDT;
-    asm!("mov $0, %eax"::"r"(gdtaddr)::);
     new_entry(0,0,0,0);
     new_entry(0, 0xFFFFF, GDT_PRESENT | GDT_DPL0 | GDT_CODE | GDT_READABLE, GDT_GRANULAR | GDT_32BIT);
     new_entry(0, 0xFFFFF, GDT_PRESENT | GDT_DPL0 | GDT_DATA | GDT_WRITABLE, GDT_GRANULAR | GDT_32BIT);
     new_entry(0, 0xFFFFF, GDT_PRESENT | GDT_DPL3 | GDT_CODE | GDT_READABLE, GDT_GRANULAR | GDT_32BIT);
     new_entry(0, 0xFFFFF, GDT_PRESENT | GDT_DPL3 | GDT_DATA | GDT_WRITABLE, GDT_GRANULAR | GDT_32BIT);
     util::memset_u8((gdt as uint + 5*size_of::<GDT>()), 0, size_of::<GDT>());
-//    usermode::tss_entry((gdt as uint + 5*size_of::<GDT>()) as *mut GDT);
+    usermode::tss_entry((gdt as uint + 5*size_of::<GDT>()) as *mut GDT);
     set_gdt(gdt as uint, size_of::<GDT>() * GDT_ENTRIES - 1);
+    tss_flush();
 }
 

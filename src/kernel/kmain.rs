@@ -14,7 +14,7 @@ use memory::Alloc;
 #[path = "../rust-core/core/mod.rs"]
 mod core;
 mod memory;
-pub mod screen;
+mod screen;
 mod util;
 mod gdt;
 pub mod idt;
@@ -22,6 +22,11 @@ mod timer;
 mod keyboard;
 mod multiboot;
 mod paging;
+mod usermode;
+mod elf;
+mod elfloader;
+
+extern { static stack_end: uint; fn jump_usermode(entry: extern "C" fn()) -> ();}
 
 #[no_mangle]
 pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
@@ -59,6 +64,14 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
             multiboot::mmap_print(mmap, colours);
             mmap = ((mmap as uint) + (*mmap).size + core::mem::size_of::<u32>()) as *multiboot::memory_map;
         }
+
+        let module: *multiboot::module = (*mbd).mods_addr as *multiboot::module;
+        let ehdr: *elf::Elf32_Ehdr = (*module).start as *elf::Elf32_Ehdr;
+        let entry = elfloader::load_elf(ehdr);
+        screen::puts("Entering usermode now...\n", colours);
+        jump_usermode(entry);
     }
     loop{};
 }
+
+extern "C" fn test() {loop{};}

@@ -3,3 +3,4 @@ timeout 3
 
 title OS
 kernel /System/kernel.bin
+module /System/main.elf
