@@ -83,7 +83,9 @@ pub unsafe fn puthex(hex: uint, colours: Colours)
 {
     putc('0' as u8, colours);
     putc('x' as u8, colours);
-    let ptr = &hex as *uint as uint as *u8;
+    let tmp = 0;
+    util::memcpy(&tmp as *uint as uint, &hex as *uint as uint, 4);
+    let ptr = &tmp as *uint as uint as *u8;
     util::range(0,3, |i| {
         let byte = *((ptr as uint + (3-i)) as *u8);
         putc(nybble_chars[(byte >> 4) & 0xF]as u8, colours);

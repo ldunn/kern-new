@@ -10,6 +10,7 @@ use screen;
 static mut first_page_table: *mut [uint, ..1024] = 0 as *mut [uint, ..1024];
 static mut frames: *mut uint = 0 as *mut uint;
 static mut num_frames: uint = 0;
+static mut current_dir: *mut page_directory = 0 as *mut page_directory;
 
 pub struct page_directory {
     tables: [uint, ..1024],
@@ -26,14 +27,15 @@ pub unsafe fn init()
     let (page_dir_addr,_) = memory::malloc(size_of::<page_directory>());
     util::memset_u8(page_dir_addr as uint, 0, size_of::<page_directory>());
     let page_dir = page_dir_addr as *mut page_directory;
+    current_dir = page_dir;
     
-    num_frames = 0x1000000 / 0x1000;
+    num_frames = 0x100000;
     let (frame_addr,_) = memory::malloc(num_frames/32);
     util::memset_u8(frame_addr as uint, 0, num_frames/32);
     frames = frame_addr as *mut uint;
 
     let mut i = 0;
-    while i < num_frames*0x1000 {
+    while i < 0x1000000 {
         let x = get_page(i, true, page_dir);
         *x = alloc_frame(*x, false, true);
         i += 0x1000;
@@ -106,10 +108,15 @@ unsafe fn get_page(addr: uint, make: bool, dir: *mut page_directory) -> *mut uin
     }
 }
 
-extern fn handler(_: *mut idt::registers) 
+extern fn handler(regs: *mut idt::registers) 
 {
     unsafe {
-        screen::puts("PAGE FAULT!", screen::Colours{fore:5,back:0});
-        loop{};
+        screen::puts("PAGE FAULT at: ", screen::Colours{fore:5,back:0});
+        let mut cr2 = 0;
+        asm!("mov %cr2, $0":"=r"(cr2):::);
+        screen::puthex(cr2, screen::Colours{fore:5, back:0});
+        screen::puts("\n", screen::Colours{fore:5, back:0});
+        let x = get_page(cr2, true, current_dir);
+        *x = alloc_frame(*x, false, true);
     }
 }

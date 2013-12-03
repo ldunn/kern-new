@@ -19,14 +19,14 @@ mod util;
 mod gdt;
 pub mod idt;
 mod timer;
-mod keyboard;
+    mod keyboard;
 mod multiboot;
 mod paging;
 mod usermode;
 mod elf;
 mod elfloader;
 
-extern { static stack_end: uint; fn jump_usermode(entry: extern "C" fn()) -> ();}
+extern { static stack_end: uint; fn jump_usermode(entry: uint) -> ();}
 
 #[no_mangle]
 pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
@@ -67,6 +67,7 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
 
         let module: *multiboot::module = (*mbd).mods_addr as *multiboot::module;
         let ehdr: *elf::Elf32_Ehdr = (*module).start as *elf::Elf32_Ehdr;
+        screen::puthex(ehdr as uint, colours);
         let entry = elfloader::load_elf(ehdr);
         screen::puts("Entering usermode now...\n", colours);
         jump_usermode(entry);
@@ -74,4 +75,4 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
     loop{};
 }
 
-extern "C" fn test() {loop{};}
+extern "C" fn test() {unsafe { *(0xbabebabe as *mut uint) = 0xdeadbeef; loop{};}}

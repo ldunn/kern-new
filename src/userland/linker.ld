@@ -1,13 +1,8 @@
-ENTRY (loader)
+ENTRY (main)
 
 SECTIONS
 {
-    . = 0x0100000;
-
-    .mboot ALIGN(0x1000) :
-    {
-        *(.mboot)
-    }
+    . = 0x0A00000;
 
     .text ALIGN (0x1000) :
     {

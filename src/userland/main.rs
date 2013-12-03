@@ -1,12 +1,16 @@
 #[no_std];
-#[no_core];
 
 #[link(name = "userland", vers="0.0")];
 #[crate_type="executable"];
+ #[feature(asm)] ;
 
 
-pub fn main() {
+#[main]
+#[no_mangle]
+pub extern fn main() {
     unsafe {
+        *(0xdeadcafe as *mut uint) = 0xdeadcafe;
+        asm!("mov $0, %eax"::"r"(*(0xdeadcafe as *mut uint))::);
         loop{};
     }
 }

@@ -1,9 +1,10 @@
 use core::mem;
 use util;
+use screen;
 
 static mut HEAP_START: uint = 0;
 static BLOCK_SIZE: uint = 4096; // one byte for the free flag
-static mut free_blocks: [uint, ..16] = [0xffffffff,..16]; // single-bit flags
+static mut free_blocks: [uint, ..64] = [0xffffffff,..64]; // single-bit flags
 static mut first_free: uint = 0;
 
 pub unsafe fn find_block_run(start: uint, n: uint, current: uint) -> uint {
@@ -22,7 +23,7 @@ extern {
 }
 
 pub unsafe fn init() {
-    HEAP_START = (((0x200000 as *uint) as uint) & 0xFFFFF000) + 0x1000;
+    HEAP_START = (((0x400000 as *uint) as uint) & 0xFFFFF000) + 0x1000;
 }
 
 #[no_mangle]

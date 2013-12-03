@@ -125,14 +125,15 @@ pub fn getChar() -> u8 {
         
         buff_start += 1;
         if (buff_start >= 64) {
-            buff_start = 0
+            buff_start = 0;
         }
-        
+
         if (code & 0x100 > 0) {
-            keysymShift[code & 0xff]
+            return keysymShift[code & 0xff]
         } else {
-            keysym[code]
+            return keysym[code]
         }
+        0
     }
 }
 
