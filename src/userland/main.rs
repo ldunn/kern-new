@@ -10,7 +10,7 @@
 pub extern fn main() {
     unsafe {
         *(0xdeadcafe as *mut uint) = 0xdeadcafe;
-        asm!("mov $0, %eax"::"r"(*(0xdeadcafe as *mut uint))::);
+        *(0 as *mut uint) = 3;
         loop{};
     }
 }
