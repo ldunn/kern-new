@@ -32,29 +32,26 @@ extern { static stack_end: uint; fn jump_usermode(entry: uint) -> ();}
 pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
     let colours = screen::Colours {fore: 7, back: 0}; // Light gray on black
     unsafe {
-        memory::init();
-        let mut xs = vec::Vec::with_alloc(Alloc);
-        xs.push(0xdead);
-        xs.push(0xdead);
-        xs.push(0xdead);
         screen::cls(0);
-        screen::puts("Hello!\n", colours);
-        screen::puts("Multiboot magic: ", colours);
-        screen::puthex(magic, colours);
-        screen::puts("\n", colours);
-        screen::puts("- Initializing GDT... ", colours);
+        screen::puts("Welcome to thing!\n", colours);
+        screen::puts("* Initializing GDT... ", colours);
         gdt::init();
         screen::puts("DONE\n", colours);
-        screen::puts("- Initializing IDT... ", colours);
+        screen::puts("* Initializing IDT... ", colours);
         idt::init();
         screen::puts("DONE\n", colours);
-        screen::puts("- Initializing Paging... ", colours);
+        screen::puts("* Initializing Paging... ", colours);
         paging::init();
         screen::puts("DONE\n", colours);
-        screen::puts("- Initializing timer... ", colours);
+        screen::puts("* Multiboot magic: ", colours);
+        screen::puthex(magic, colours);
+        screen::puts("\n", colours);
+        screen::puts("* Initializing GDT... ", colours);
+        screen::puts("DONE\n", colours);
+        screen::puts("* Initializing Timer... ", colours);
         timer::init();
         screen::puts("DONE\n", colours);
-        screen::puts("- Initializing keyboard... ", colours);
+        screen::puts("* Initializing Keyboard... ", colours);
         keyboard::init();
         screen::puts("DONE\n", colours);
 
@@ -67,12 +64,9 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
 
         let module: *multiboot::module = (*mbd).mods_addr as *multiboot::module;
         let ehdr: *elf::Elf32_Ehdr = (*module).start as *elf::Elf32_Ehdr;
-        screen::puthex(ehdr as uint, colours);
         let entry = elfloader::load_elf(ehdr);
-        screen::puts("Entering usermode now...\n", colours);
+        screen::puts("- Entering usermode now...\n", colours);
         jump_usermode(entry);
     }
     loop{};
 }
-
-extern "C" fn test() {unsafe { *(0xbabebabe as *mut uint) = 0xdeadbeef; loop{};}}

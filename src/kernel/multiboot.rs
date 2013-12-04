@@ -43,7 +43,7 @@ pub struct module {
 
 #[no_mangle]
 pub unsafe fn print(mbd: *multiboot_info, colours: screen::Colours) {
-    screen::puts("MULTIBOOT INFO\nflags: ", colours);
+    screen::puts("* MULTIBOOT INFO *\nflags: ", colours);
     screen::puthex((*mbd).flags as uint,  colours);
     screen::putc('\n' as u8, colours);
     screen::puts("mem_lower: ", colours);
