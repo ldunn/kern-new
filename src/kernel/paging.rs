@@ -24,23 +24,25 @@ extern {
 #[fixed_stack_segment]
 pub unsafe fn init()
 {
-    let (page_dir_addr,_) = memory::malloc(size_of::<page_directory>());
+    let page_dir_addr = memory::kernel_malloc(size_of::<page_directory>(), true);
     util::memset_u8(page_dir_addr as uint, 0, size_of::<page_directory>());
     let page_dir = page_dir_addr as *mut page_directory;
     current_dir = page_dir;
     
     num_frames = 0x100000;
-    let (frame_addr,_) = memory::malloc(num_frames/32);
+    let frame_addr = memory::kernel_malloc(num_frames/32, true);
     util::memset_u8(frame_addr as uint, 0, num_frames/32);
     frames = frame_addr as *mut uint;
 
     let mut i = 0;
     while i < 0x1000000 {
         let x = get_page(i, true, page_dir);
-        *x = alloc_frame(*x, false, true);
+        *x = alloc_frame(*x, true, true);
         i += 0x1000;
     }
-
+    let x = get_page(0xfffff000, true, page_dir);
+    *x = (page_dir_addr as uint) | 0x7;
+    set_frame(x as uint);
     enable_paging((&mut (*page_dir).tables_phys) as *mut [uint,..1024]);
     idt::register_interrupt_handler(14, handler);
 }
@@ -98,10 +100,10 @@ unsafe fn get_page(addr: uint, make: bool, dir: *mut page_directory) -> *mut uin
     if((*dir).tables[table_index] != 0) { // This table exists
        (((*dir).tables[table_index]) + (address%1024)*size_of::<uint>()) as *mut uint
     } else if make {
-        let (table_address, _, phys_address) = memory::malloc_phys(size_of::<uint>()*1024);
+        let table_address = memory::kernel_malloc(size_of::<uint>()*1024, true);
         util::memset_u8(table_address as uint, 0, 0x1000);
         (*dir).tables[table_index] = table_address as uint;
-        (*dir).tables_phys[table_index] = phys_address as uint | 0x7; // present, r/w, user
+        (*dir).tables_phys[table_index] = table_address as uint | 0x7; // present, r/w, user
         (((*dir).tables[table_index]) + (address%1024)*size_of::<uint>()) as *mut uint
     } else {
         0 as *mut uint
