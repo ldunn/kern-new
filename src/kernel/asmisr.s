@@ -113,8 +113,7 @@ isr_common_stub:
    mov es, ax
    mov fs, ax
    mov gs, ax
-    mov [gs:0x30], dword 0
-   add esp, 8     ; C1eans up the pushed error code and pushed ISR number
    popa                     ; Pops edi,esi,ebp...
+    add esp, 8     ; Cleans up the pushed error code and pushed ISR number
    sti
    iret           ; pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
