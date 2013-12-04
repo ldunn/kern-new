@@ -111,11 +111,8 @@ unsafe fn get_page(addr: uint, make: bool, dir: *mut page_directory) -> *mut uin
 extern fn handler(regs: *mut idt::registers) 
 {
     unsafe {
-        screen::puts("PAGE FAULT at: ", screen::Colours{fore:5,back:0});
         let mut cr2 = 0;
         asm!("mov %cr2, $0":"=r"(cr2):::);
-        screen::puthex(cr2, screen::Colours{fore:5, back:0});
-        screen::puts("\n", screen::Colours{fore:5, back:0});
         let x = get_page(cr2, true, current_dir);
         *x = alloc_frame(*x, false, true);
     }
