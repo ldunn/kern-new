@@ -2,9 +2,10 @@ use core::mem;
 use util;
 use screen;
 
-static mut HEAP_START: uint = 0;
+static mut HEAP_START: uint = 0x1000000;
 static BLOCK_SIZE: uint = 4096; // one byte for the free flag
-static mut free_blocks: [uint, ..64] = [0xffffffff,..64]; // single-bit flags
+static mut free_blocks: [uint, ..0x1000] = [0xffffffff,..0x1000]; // single-bit flags
+static mut k_placement: uint = 0x40000;
 static mut first_free: uint = 0;
 
 pub unsafe fn find_block_run(start: uint, n: uint, current: uint) -> uint {
@@ -22,8 +23,14 @@ extern {
     static end: uint; //defined by linker
 }
 
-pub unsafe fn init() {
-    HEAP_START = (((0x400000 as *uint) as uint) & 0xFFFFF000) + 0x1000;
+pub unsafe fn kernel_malloc(size: uint, align: bool) -> *mut u8 {
+    if align && (k_placement & 0xfffff000) > 0 {
+        k_placement &= 0xfffff000;
+        k_placement += 0x1000;
+    }
+    let addr = k_placement;
+    k_placement += size;
+    addr as *mut u8
 }
 
 #[no_mangle]

@@ -214,9 +214,8 @@ extern fn test()
 
 #[fixed_stack_segment]
 pub unsafe fn init() {
-    let (idtaddr, _) = memory::malloc(size_of::<IDTDescr>() * 256);
-    idt = idtaddr as *mut [IDTDescr, ..256];
-    let (int_handler_addr,_) = memory::malloc(size_of::<*extern "C" unsafe fn(regs: *mut registers)>() * 256);
+    idt = memory::kernel_malloc(size_of::<IDTDescr>() * 256, false) as *mut [IDTDescr, ..256];
+    let int_handler_addr = memory::kernel_malloc(size_of::<*extern "C" unsafe fn(regs: *mut registers)>() * 256, false);
     interrupt_handlers = int_handler_addr as *mut [extern "C" unsafe fn(regs: *mut registers),..256];
     util::memset_u8(idt as uint, 0, size_of::<IDTDescr>() * 256 -1);
     util::memset_u8(interrupt_handlers as uint, 0, size_of::<extern "C" unsafe fn(regs: *mut registers)>() * 256);

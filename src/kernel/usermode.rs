@@ -44,8 +44,7 @@ static mut tss: *mut tss_entry = 0 as *mut tss_entry;
 pub unsafe fn tss_entry(g: *mut gdt::GDT)
 {
 
-    let (tss_addr,_) = memory::malloc(size_of::<tss_entry>());
-    tss = tss_addr as *mut tss_entry;
+    tss = memory::kernel_malloc(size_of::<tss_entry>(), false) as *mut tss_entry;
     let base = tss as uint;
     let limit = base + 104;
 
