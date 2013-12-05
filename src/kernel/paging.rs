@@ -37,7 +37,7 @@ pub unsafe fn init()
     let mut i = 0;
     while i < 0x1000000 {
         let x = get_page(i, true, page_dir);
-        *x = alloc_frame(*x, true, true);
+        *x = identity_page(i, true, true);
         i += 0x1000;
     }
     let x = get_page(0xfffff000, true, page_dir);
@@ -88,6 +88,16 @@ unsafe fn alloc_frame(page: uint, is_kernel: bool, is_writeable: bool) -> uint{
     let idx = first_frame();
     set_frame(idx*0x1000);
     new_page = idx*0x1000;
+    new_page |= 1; // mark as present
+    if is_writeable { new_page |= 2; } // mark as writeable
+    if !is_kernel { new_page |= 4; } // mark as user
+    new_page
+}
+
+unsafe fn identity_page(address: uint, is_kernel: bool, is_writeable: bool) -> uint{
+    let mut new_page = address;
+    set_frame(address);
+    new_page = address;
     new_page |= 1; // mark as present
     if is_writeable { new_page |= 2; } // mark as writeable
     if !is_kernel { new_page |= 4; } // mark as user
