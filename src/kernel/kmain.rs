@@ -7,6 +7,7 @@
 #[feature(macro_rules)];
 
 use core::vec;
+use core::mem::transmute;
 use core::container::Container;
 use core::slice::{Slice, iter, unchecked_get};
 use memory::Alloc;
@@ -26,7 +27,7 @@ mod usermode;
 mod elf;
 mod elfloader;
 
-extern { static stack_end: uint; fn jump_usermode(entry: uint) -> ();}
+extern "C" { static stack_end: uint; fn jump_usermode(entry: extern "C" fn());}
 
 #[no_mangle]
 pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
@@ -49,7 +50,7 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
         screen::puts("* Initializing GDT... ", colours);
         screen::puts("DONE\n", colours);
         screen::puts("* Initializing Timer... ", colours);
-        timer::init();
+        //timer::init();
         screen::puts("DONE\n", colours);
         screen::puts("* Initializing Keyboard... ", colours);
         keyboard::init();
@@ -67,7 +68,9 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
         let entry = elfloader::load_elf(ehdr);
         screen::puts("- Entering usermode now... ", colours);
         screen::puthex(entry, colours);
-        jump_usermode(entry);
+        jump_usermode(transmute(entry));
     }
     loop{};
 }
+
+extern "C" fn test() { loop{};}

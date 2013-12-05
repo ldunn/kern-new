@@ -128,7 +128,9 @@ extern test_usermode
 
 jump_usermode:
     cli
-    mov ebx, eax
+    push ebp
+    mov ebx, [esp+8]
+    pop ebp
     mov ax, 0x23
     mov ds, ax
     mov es, ax

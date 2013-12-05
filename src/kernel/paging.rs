@@ -37,7 +37,7 @@ pub unsafe fn init()
     let mut i = 0;
     while i < 0x1000000 {
         let x = get_page(i, true, page_dir);
-        *x = identity_page(i, true, true);
+        *x = identity_page(i, false, true);
         i += 0x1000;
     }
     let x = get_page(0xfffff000, true, page_dir);
