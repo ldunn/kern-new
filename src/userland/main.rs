@@ -9,8 +9,6 @@
 #[no_mangle]
 pub extern fn main() {
     unsafe {
-        *(0xdeadcafe as *mut uint) = 0xdeadcafe;
-        *(0 as *mut uint) = 3;
         loop{};
     }
 }
