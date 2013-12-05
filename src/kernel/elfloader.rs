@@ -1,7 +1,5 @@
 use elf;
-use screen;
 use util;
-use core;
 
 pub unsafe fn load_elf(header: *elf::Elf32_Ehdr) -> uint
 {

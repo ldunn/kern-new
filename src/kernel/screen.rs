@@ -1,9 +1,5 @@
-#[no_std];
-#[no_core];
-
 use util;
 use core::vec;
-use core::slice;
 use core::option::{Some, None};
 use memory::Alloc;
 
@@ -24,7 +20,6 @@ pub unsafe fn cls(background: u16) {
     cursor = Cursor{x:0, y:0};
 }
 
-#[fixed_stack_segment]
 pub unsafe fn move_cursor()
 {
     let position = ((cursor.y * 80 + cursor.x)) as u16;
@@ -108,7 +103,7 @@ pub unsafe fn putdec(dec: uint, colours: Colours)
         digit = val % 10;
     }
 
-    util::range(0, buf.len()-1, |i| {
+    util::range(0, buf.len()-1, |_| {
         let x = buf.pop();
         match x {
             Some(x) => putc(x, colours),

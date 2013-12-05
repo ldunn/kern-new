@@ -1,7 +1,3 @@
-#[no_core];
-#[no_std];
-pub enum c_void {}
-
 pub fn range(lo: uint, hi: uint, it: |uint|) {
     let mut iter = lo;
     while iter <= hi {
@@ -47,7 +43,7 @@ pub unsafe fn memcpy(to: uint, from: uint, len: uint) {
 pub fn pow(b: uint, e: uint) -> uint {
     if e == 0 { return 1; }
     let mut x = b;
-    range(1, e-1, |i| {
+    range(1, e-1, |_| {
         x *= b;
     });
     x

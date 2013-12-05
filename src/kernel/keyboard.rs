@@ -81,7 +81,7 @@ static mut pressed: [u8, ..101] = [0, ..101];
 static mut buff_start: u8 = 0;
 static mut buff_end: u8 = 0;
 
-extern fn handler(regs: *mut idt::registers)
+extern fn handler(_: *mut idt::registers)
 {
     unsafe {
         let x = util::inportb(0x60);
@@ -129,11 +129,10 @@ pub fn getChar() -> u8 {
         }
 
         if (code & 0x100 > 0) {
-            return keysymShift[code & 0xff]
+            keysymShift[code & 0xff]
         } else {
-            return keysym[code]
+            keysym[code]
         }
-        0
     }
 }
 

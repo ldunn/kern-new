@@ -8,7 +8,5 @@
 #[main]
 #[no_mangle]
 pub extern fn main() {
-    unsafe {
         loop{};
-    }
 }

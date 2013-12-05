@@ -1,5 +1,4 @@
 use idt;
-use screen;
 
 static mut ticks: uint = 0;
 

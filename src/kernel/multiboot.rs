@@ -1,6 +1,3 @@
-#[no_std]
-#[no_core]
-
 use screen;
 
 #[packed]

@@ -1,11 +1,7 @@
-#[no_std]
-#[no_core]
-
 use memory;
 use util;
 use core::mem::size_of;
 use idt;
-use screen;
 
 static mut first_page_table: *mut [uint, ..1024] = 0 as *mut [uint, ..1024];
 static mut frames: *mut uint = 0 as *mut uint;
@@ -21,7 +17,7 @@ pub struct page_directory {
 extern {
     fn enable_paging(directory: *mut [uint, ..1024]);
 }
-#[fixed_stack_segment]
+
 pub unsafe fn init()
 {
     let page_dir_addr = memory::kernel_malloc(size_of::<page_directory>(), true);
@@ -120,7 +116,7 @@ unsafe fn get_page(addr: uint, make: bool, dir: *mut page_directory) -> *mut uin
     }
 }
 
-extern fn handler(regs: *mut idt::registers) 
+extern fn handler(_: *mut idt::registers) 
 {
     unsafe {
         let mut cr2 = 0;

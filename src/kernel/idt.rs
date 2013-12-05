@@ -94,7 +94,7 @@ pub unsafe fn register_interrupt_handler(n: u8, handler: extern "C" unsafe fn(re
     (*interrupt_handlers)[n] = handler;
 }
 
-#[fixed_stack_segment]
+
 pub unsafe fn set_mask(irq: uint) {
     if irq < 8 {
         // PIC1
@@ -159,7 +159,7 @@ unsafe fn set_gate(gate: uint, offset: uint, selector: u16, type_attr: u8)
     };
 }
 
-#[fixed_stack_segment]
+
 unsafe fn remap_pic() 
 {
     let mask1 = util::inportb(0x21);
@@ -212,7 +212,7 @@ extern fn test()
     }
 }
 
-#[fixed_stack_segment]
+
 pub unsafe fn init() {
     idt = memory::kernel_malloc(size_of::<IDTDescr>() * 256, false) as *mut [IDTDescr, ..256];
     let int_handler_addr = memory::kernel_malloc(size_of::<*extern "C" unsafe fn(regs: *mut registers)>() * 256, false);

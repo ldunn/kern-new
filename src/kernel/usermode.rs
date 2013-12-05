@@ -1,10 +1,6 @@
-#[no_std]
-#[no_core]
-
 use gdt;
 use util;
 use memory;
-use screen;
 use core::mem::size_of;
 
 #[packed]

@@ -64,7 +64,7 @@ unsafe fn new_entry(base: uint, limit: uint, access: u8, flags: u8)
     }
 }
 
-#[fixed_stack_segment]
+
 pub unsafe fn init() {
     gdt  = memory::kernel_malloc(size_of::<GDT>() * GDT_ENTRIES, false) as *GDT;
     new_entry(0,0,0,0);

@@ -6,10 +6,8 @@
 #[feature(asm)];
 #[feature(macro_rules)];
 
-use core::vec;
 use core::mem::transmute;
 use core::container::Container;
-use core::slice::{Slice, iter, unchecked_get};
 use memory::Alloc;
 
 #[path = "../rust-core/core/mod.rs"]
@@ -20,7 +18,7 @@ mod util;
 mod gdt;
 pub mod idt;
 mod timer;
-    mod keyboard;
+mod keyboard;
 mod multiboot;
 mod paging;
 mod usermode;

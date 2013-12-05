@@ -1,6 +1,5 @@
 use core::mem;
 use util;
-use screen;
 
 static mut HEAP_START: uint = 0x1000000;
 static BLOCK_SIZE: uint = 4096; // one byte for the free flag
