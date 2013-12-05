@@ -77,7 +77,7 @@ static keysymShift: [u8, ..90] = [0, 27, '!' as u8, '@' as u8, '#' as u8, '$' as
   0, /* All other keys are undefined */];
 
 static mut buff: [uint, ..64] = [0, ..64];
-static mut pressed: [u8, ..90] = [0, ..90];
+static mut pressed: [u8, ..101] = [0, ..101];
 static mut buff_start: u8 = 0;
 static mut buff_end: u8 = 0;
 
@@ -85,7 +85,7 @@ extern fn handler(regs: *mut idt::registers)
 {
     unsafe {
         let x = util::inportb(0x60);
-        
+       
         if (x & 0x80) == 0 {
             buff[buff_end] = (x as uint) | (pressed[0x2A] as uint << 8);
             
