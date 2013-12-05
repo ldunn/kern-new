@@ -65,7 +65,8 @@ pub extern fn kmain(mbd: *multiboot::multiboot_info, magic:uint) {
         let module: *multiboot::module = (*mbd).mods_addr as *multiboot::module;
         let ehdr: *elf::Elf32_Ehdr = (*module).start as *elf::Elf32_Ehdr;
         let entry = elfloader::load_elf(ehdr);
-        screen::puts("- Entering usermode now...\n", colours);
+        screen::puts("- Entering usermode now... ", colours);
+        screen::puthex(entry, colours);
         jump_usermode(entry);
     }
     loop{};
